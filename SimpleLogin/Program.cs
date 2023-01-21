@@ -12,11 +12,19 @@ namespace SimpleLogin
 
         public static void Main()
         {
-            bool main = true;
-            while (main)
+            while (true)
             {
                 Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2");
-                int start = short.Parse(Console.ReadLine() ?? "1");
+
+                bool result = int.TryParse(Console.ReadLine() ?? "1", out int start);
+
+                if (result == false || !new List<int>() { 0,1,2 }.Contains(start))
+                {
+                    Console.WriteLine("Wrong input\n");
+                    continue;
+                }
+
+                if (start == 0) Environment.Exit(1);
 
                 string username = GetUsername();
                 string password = GetPassword();
@@ -24,17 +32,13 @@ namespace SimpleLogin
                 switch (start)
                 {
                     case 1:
-                        if (CheckUserCredential(username, password)) Console.WriteLine("Login successfull!");
-                        else Console.WriteLine("Login failed! Username or Password incorrect");
+                        if (CheckUserCredential(username, password)) Console.WriteLine("Login successfull!\n");
+                        else Console.WriteLine("Login failed! Username or Password incorrect\n");
                         break;
 
                     case 2:
-                        if (!CheckIfUserExists(username))
-                        {
-                            AddNewUser(username, password);
-                            Console.WriteLine("Successfully registered!");
-                        }
-                        else Console.WriteLine("An User with this Username already exists");
+                        if (AddNewUser(username, password)) Console.WriteLine("Successfully registered!\n");
+                        else Console.WriteLine("Registration failed!\n");
                         break;
 
                     default:
@@ -55,24 +59,28 @@ namespace SimpleLogin
             return SimpleEncrypter.EncryptString(_encryptKey, Console.ReadLine() ?? "");
         }
 
-        private static void AddNewUser(string username, string password)
+        private static bool AddNewUser(string username, string password)
         {
+            if (CheckIfUserExists(username)) return false;
+
             using var database = new UserContext();
             database.Add(new User() { Id = new Guid(), Username = username, Usersecret = password });
             database.SaveChanges();
-        }
 
-        private static bool CheckIfUserExists(string username)
-        {
-            using var database = new UserContext();
-            if (database.Users.Any(u => u.Username == username)) return true;
-            return false;
+            return true;
         }
 
         private static bool CheckUserCredential(string username, string password)
         {
             using var database = new UserContext();
             if (database.Users.Any(u => u.Username == username && u.Usersecret == password)) return true;
+            return false;
+        }
+
+        private static bool CheckIfUserExists(string username)
+        {
+            using var database = new UserContext();
+            if (database.Users.Any(u => u.Username == username)) return true;
             return false;
         }
     }
