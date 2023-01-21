@@ -26,7 +26,11 @@ namespace SimpleLogin
                     break;
 
                 case 2:
-                    if (!CheckIfUserExists(username)) AddNewUser(username, password);
+                    if (!CheckIfUserExists(username))
+                    {
+                        AddNewUser(username, password);
+                        Console.WriteLine("Successfully registered!");
+                    }
                     else Console.WriteLine("An User with this Username already exists");
                     break;
 
