@@ -8,7 +8,7 @@ namespace SimpleLogin
 {
     public class SimpleLogin
     {
-        public static readonly string _encryptKey = "";
+        public static readonly string _encryptKey = "b14ca5898a4e4133bbce2ea2315a1916";
 
         public static void Main()
         {
