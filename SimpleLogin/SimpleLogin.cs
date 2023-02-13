@@ -121,6 +121,7 @@ namespace SimpleLogin
             }
         }
 
+        //Methode zum suche von Nutzern im System
         private static void SearchUser()
         {
             string username = GetUsername();
