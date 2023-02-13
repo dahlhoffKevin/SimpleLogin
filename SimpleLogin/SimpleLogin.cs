@@ -21,10 +21,10 @@ namespace SimpleLogin
         {
             while (true)
             {
-                Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2 | Show All User: 3");
+                Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2 | Show All User: 3 | Search User: 4");
                 bool result = int.TryParse(Console.ReadLine() ?? "1", out int start);
                 //Überprüft, ob der Input vom Nutzer verwendet werden kann
-                if (result == false || !new List<int>() { 0,1,2,3 }.Contains(start)) continue;
+                if (result == false || !new List<int>() { 0,1,2,3,4 }.Contains(start)) continue;
 
                 switch (start)
                 {
@@ -45,6 +45,13 @@ namespace SimpleLogin
                     case 3:
                         Console.WriteLine("All User:");
                         ShowAllUsers();
+                        Console.WriteLine("");
+                        break;
+
+                    case 4:
+                        Console.WriteLine("Search User:");
+                        SearchUser();
+                        Console.WriteLine("");
                         break;
 
                     default:
@@ -112,6 +119,22 @@ namespace SimpleLogin
             {
                 Console.WriteLine($"({u.Id}) {u.Username}"); //{SimpleEncrypter.DecryptString(_encryptKey, u.Usersecret ?? "<No password submitted>")}
             }
+        }
+
+        private static void SearchUser()
+        {
+            string username = GetUsername();
+            using var database = new UserContext();
+            Guid newGuid = new();
+            User user = database.Users.Where(u => u.Username == username).FirstOrDefault() ?? new User() { Id = newGuid, Username = $"{newGuid}-null", Usersecret = $"{newGuid}-null" };
+
+            if (user.Username == $"{newGuid}-null")
+            {
+                Console.WriteLine("User not found");
+                return;
+            }
+
+            Console.WriteLine($"1 User found:\nUsername = ({user.Id}) {user.Username}");
         }
     }
 }
