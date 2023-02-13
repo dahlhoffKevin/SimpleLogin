@@ -110,7 +110,7 @@ namespace SimpleLogin
             Console.WriteLine(user.Count);
             foreach (User u in user)
             {
-                Console.WriteLine($"{u.Username} - {SimpleEncrypter.DecryptString(_encryptKey, u.Usersecret ?? "<No password submitted>")}");
+                Console.WriteLine($"({u.Id}) {u.Username}"); //{SimpleEncrypter.DecryptString(_encryptKey, u.Usersecret ?? "<No password submitted>")}
             }
         }
     }
