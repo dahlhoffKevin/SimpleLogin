@@ -19,6 +19,8 @@ namespace SimpleLogin
 
         public static void Main()
         {
+            using var database = new UserContext();
+
             while (true)
             {
                 Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2 | Show All User: 3 | Search User: 4");
@@ -33,24 +35,24 @@ namespace SimpleLogin
                         break;
 
                     case 1:
-                        if (CheckUserCredential()) Console.WriteLine("Login successfull!\n");
+                        if (CheckUserCredential(database)) Console.WriteLine("Login successfull!\n");
                         else Console.WriteLine("Login failed! Username or Password incorrect\n");
                         break;
 
                     case 2:
-                        if (AddNewUser()) Console.WriteLine("Successfully registered!\n");
+                        if (AddNewUser(database)) Console.WriteLine("Successfully registered!\n");
                         else Console.WriteLine("Registration failed: User does already exists!\n");
                         break;
 
                     case 3:
                         Console.WriteLine("All User:");
-                        ShowAllUsers();
+                        ShowAllUsers(database);
                         Console.WriteLine("");
                         break;
 
                     case 4:
                         Console.WriteLine("Search User:");
-                        SearchUser();
+                        SearchUser(database);
                         Console.WriteLine("");
                         break;
 
@@ -75,15 +77,14 @@ namespace SimpleLogin
         }
 
         //Erstellt einen neuen Nutzer und lädt ihn in die Datenbank
-        private static bool AddNewUser()
+        private static bool AddNewUser(UserContext database)
         {
             string username = GetUsername();
             string password = GetPassword();
             if (username == "" || password == "") return false;
 
-            if (CheckIfUserExists(username)) return false;
+            if (CheckIfUserExists(database, username)) return false;
 
-            using var database = new UserContext();
             database.Add(new User() { Id = new Guid(), Username = username, Usersecret = password });
             database.SaveChanges();
 
@@ -91,28 +92,25 @@ namespace SimpleLogin
         }
 
         //Überprüft, ob das eingegebenen Passwort korrekt ist
-        private static bool CheckUserCredential()
+        private static bool CheckUserCredential(UserContext database)
         {
             string username = GetUsername();
             string password = GetPassword();
 
-            using var database = new UserContext();
             if (database.Users.Any(u => u.Username == username && u.Usersecret == password)) return true;
             return false;
         }
 
         //Überprüft, ob der eingegebenen Nutzername vorhanden ist
-        private static bool CheckIfUserExists(string username)
+        private static bool CheckIfUserExists(UserContext database, string username)
         {
-            using var database = new UserContext();
             if (database.Users.Any(u => u.Username == username)) return true;
             return false;
         }
 
         //Zeigt alle aktuell registrierten Nutzer in der Datenbank an
-        private static void ShowAllUsers()
+        private static void ShowAllUsers(UserContext database)
         {
-            using var database = new UserContext();
             List<User> user = database.Users.ToList();
             Console.WriteLine(user.Count);
             foreach (User u in user)
@@ -122,10 +120,9 @@ namespace SimpleLogin
         }
 
         //Methode zum suche von Nutzern im System
-        private static void SearchUser()
+        private static void SearchUser(UserContext database)
         {
             string username = GetUsername();
-            using var database = new UserContext();
             Guid newGuid = new();
             User user = database.Users.Where(u => u.Username == username).FirstOrDefault() ?? new User() { Id = newGuid, Username = $"{newGuid}-null", Usersecret = $"{newGuid}-null" };
 
