@@ -107,7 +107,7 @@ namespace SimpleLogin
         {
             using var database = new UserContext();
             List<User> user = database.Users.ToList();
-            Console.WriteLine(user.Count());
+            Console.WriteLine(user.Count);
             foreach (User u in user)
             {
                 Console.WriteLine($"{u.Username} - {SimpleEncrypter.DecryptString(_encryptKey, u.Usersecret ?? "<No password submitted>")}");
