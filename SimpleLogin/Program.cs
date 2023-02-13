@@ -59,14 +59,14 @@ namespace SimpleLogin
             }
         }
 
-        //Gibt den, vom Nutzer eingegebenen Nutzernamen, zurück
+        //Gibt den, vom Nutzer eingegebenen, Nutzernamen zurück
         private static string GetUsername()
         {
             Console.WriteLine("Input Username:");
             return Console.ReadLine() ?? "";
         }
 
-        //Gibt das, vom Nutzer eingegebenen Passwort, zurück
+        //Gibt das, vom Nutzer eingegebenen, Passwort zurück
         private static string GetPassword()
         {
             Console.WriteLine("Input Password:");
