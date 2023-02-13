@@ -22,15 +22,9 @@ namespace SimpleLogin
             while (true)
             {
                 Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2 | Show All User: 3");
-
                 bool result = int.TryParse(Console.ReadLine() ?? "1", out int start);
-
                 //Überprüft, ob der Input vom Nutzer verwendet werden kann
-                if (result == false || !new List<int>() { 0,1,2,3 }.Contains(start))
-                {
-                    Console.WriteLine("Wrong input\n");
-                    continue;
-                }
+                if (result == false || !new List<int>() { 0,1,2,3 }.Contains(start)) continue;
 
                 switch (start)
                 {
