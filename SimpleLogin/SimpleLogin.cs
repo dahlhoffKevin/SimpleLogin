@@ -12,10 +12,18 @@ namespace SimpleLogin
     /// Nutzt das Entity Framework zum aufbau einer sicheren Verbindung zu einer Sqlite Datenbank
     /// Speichert registrierte Nutzer in einer Datenbank
     /// </summary>
+    
+    //TODO:
+    //Methode zum zurücksetzen des Passworts
+
+    //Idee:
+    //Methode zum ändern des Nutzernamens
+
     public class SimpleLogin
     {
         //Hashkey wird genutzt, um Zeichenfolgen zu verschlüsseln
         public static readonly string _encryptKey = "b14ca5898a4e4133bbce2ea2315a1916";
+        public const string _username = "";
 
         public static void Main()
         {
@@ -23,10 +31,10 @@ namespace SimpleLogin
 
             while (true)
             {
-                Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2 | Show All User: 3 | Search User: 4");
+                Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2 | Show All User: 3 | Search User: 4 | Reset Password (Experimental): 5");
                 bool result = int.TryParse(Console.ReadLine() ?? "1", out int start);
                 //Überprüft, ob der Input vom Nutzer verwendet werden kann
-                if (result == false || !new List<int>() { 0,1,2,3,4 }.Contains(start)) continue;
+                if (result == false || !new List<int>() { 0,1,2,3,4,5 }.Contains(start)) continue;
 
                 switch (start)
                 {
@@ -35,12 +43,12 @@ namespace SimpleLogin
                         break;
 
                     case 1:
-                        if (CheckUserCredential(database)) Console.WriteLine("Login successfull!\n");
+                        if (CheckUserCredential(database, GetUsername(), GetUsersecret())) Console.WriteLine("Login successfull!\n");
                         else Console.WriteLine("Login failed! Username or Password incorrect\n");
                         break;
 
                     case 2:
-                        if (AddNewUser(database)) Console.WriteLine("Successfully registered!\n");
+                        if (AddNewUser(database, GetUsername(), GetUsersecret())) Console.WriteLine("Successfully registered!\n");
                         else Console.WriteLine("Registration failed: User does already exists!\n");
                         break;
 
@@ -52,7 +60,13 @@ namespace SimpleLogin
 
                     case 4:
                         Console.WriteLine("Search User:");
-                        SearchUser(database);
+                        SearchUser(database, GetUsername());
+                        Console.WriteLine("");
+                        break;
+
+                    case 5:
+                        Console.WriteLine("Search User:");
+                        ResetUserPassword(database, GetUsername(), GetUsersecret());
                         Console.WriteLine("");
                         break;
 
@@ -70,34 +84,28 @@ namespace SimpleLogin
         }
 
         //Gibt das, vom Nutzer eingegebenen, Passwort zurück
-        private static string GetPassword()
+        private static string GetUsersecret()
         {
             Console.WriteLine("Input Password:");
             return SimpleEncrypter.EncryptString(_encryptKey, Console.ReadLine() ?? "");
         }
 
         //Erstellt einen neuen Nutzer und lädt ihn in die Datenbank
-        private static bool AddNewUser(UserContext database)
+        private static bool AddNewUser(UserContext database, string username, string usersecret)
         {
-            string username = GetUsername();
-            string password = GetPassword();
-            if (username == "" || password == "") return false;
-
+            if (username == "" || usersecret == "") return false;
             if (CheckIfUserExists(database, username)) return false;
 
-            database.Add(new User() { Id = new Guid(), Username = username, Usersecret = password });
+            database.Add(new User() { Id = new Guid(), Username = username, Usersecret = usersecret });
             database.SaveChanges();
 
             return true;
         }
 
         //Überprüft, ob das eingegebenen Passwort korrekt ist
-        private static bool CheckUserCredential(UserContext database)
+        private static bool CheckUserCredential(UserContext database, string username, string usersecret)
         {
-            string username = GetUsername();
-            string password = GetPassword();
-
-            if (database.Users.Any(u => u.Username == username && u.Usersecret == password)) return true;
+            if (database.Users.Any(u => u.Username == username && u.Usersecret == usersecret)) return true;
             return false;
         }
 
@@ -120,9 +128,8 @@ namespace SimpleLogin
         }
 
         //Methode zum suche von Nutzern im System
-        private static void SearchUser(UserContext database)
+        private static void SearchUser(UserContext database, string username)
         {
-            string username = GetUsername();
             Guid newGuid = new();
             User user = database.Users.Where(u => u.Username == username).FirstOrDefault() ?? new User() { Id = newGuid, Username = $"{newGuid}-null", Usersecret = $"{newGuid}-null" };
 
@@ -133,6 +140,31 @@ namespace SimpleLogin
             }
 
             Console.WriteLine($"1 User found:\nUsername = ({user.Id}) {user.Username}");
+        }
+
+        private static void ResetUserPassword(UserContext database, string username, string usersecret)
+        {
+            if (!CheckIfUserExists(database, username)) return;
+            if (!CheckUserCredential(database, username, usersecret)) return;
+
+            string newUsersecret = GetNewUsersecret();
+            if (newUsersecret == "") return;
+            
+            Console.WriteLine("Password updated!");
+        }
+
+        private static string GetNewUsersecret()
+        {
+            Console.WriteLine("Input new Password:");
+            string newUsersecret = Console.ReadLine() ?? "";
+
+            while (string.IsNullOrEmpty(newUsersecret))
+            {
+                Console.WriteLine("Your new Password should not be blanck!");
+                newUsersecret = Console.ReadLine() ?? "";
+            }
+
+            return newUsersecret;
         }
     }
 }
