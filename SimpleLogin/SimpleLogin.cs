@@ -142,6 +142,7 @@ namespace SimpleLogin
             Console.WriteLine($"1 User found:\nUsername = ({user.Id}) {user.Username}");
         }
 
+        //Methode zum zurücksetzen des Passworts
         private static void ResetUserPassword(UserContext database, string username, string usersecret)
         {
             if (!CheckIfUserExists(database, username)) return;
@@ -153,6 +154,7 @@ namespace SimpleLogin
             Console.WriteLine("Password updated!");
         }
 
+        //Methode um ein, vom User eingegebenes, Passwort zu überprüfen
         private static string GetNewUsersecret()
         {
             Console.WriteLine("Input new Password:");
