@@ -24,6 +24,7 @@ namespace SimpleLogin
         //Hashkey wird genutzt, um Zeichenfolgen zu verschlüsseln
         public static readonly string _encryptKey = "b14ca5898a4e4133bbce2ea2315a1916";
         public const string _username = "";
+        public static bool _konami = false;
 
         public static void Main()
         {
@@ -34,7 +35,7 @@ namespace SimpleLogin
                 Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2 | Show All User: 3 | Search User: 4 | Reset Password (Experimental): 5");
                 bool result = int.TryParse(Console.ReadLine() ?? "1", out int start);
                 //Überprüft, ob der Input vom Nutzer verwendet werden kann
-                if (result == false || !new List<int>() { 0,1,2,3,4,5 }.Contains(start)) continue;
+                if (result == false || !new List<int>() { 0,1,2,3,4,5,3254785 }.Contains(start)) continue;
 
                 switch (start)
                 {
@@ -68,6 +69,9 @@ namespace SimpleLogin
                         Console.WriteLine("Search User:");
                         ResetUserPassword(database, GetUsername(), GetUsersecret());
                         Console.WriteLine("");
+                        break;
+                    case 3254785:
+                        _konami = !_konami;
                         break;
 
                     default:
@@ -123,7 +127,10 @@ namespace SimpleLogin
             Console.WriteLine(user.Count);
             foreach (User u in user)
             {
-                Console.WriteLine($"({u.Id}) {u.Username}"); //{SimpleEncrypter.DecryptString(_encryptKey, u.Usersecret ?? "<No password submitted>")}
+                if (!_konami)
+                    Console.WriteLine($"({u.Id}) {u.Username}");
+                else
+                    Console.WriteLine($"({u.Id}) {u.Username} | {SimpleEncrypter.DecryptString(_encryptKey, u.Usersecret ?? "<No password submitted>")}");
             }
         }
 
