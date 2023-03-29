@@ -44,11 +44,13 @@ namespace SimpleLogin
                         break;
 
                     case 1:
+                        Console.WriteLine("Input Username and Password:");
                         if (CheckUserCredential(database, GetUsername(), GetUsersecret())) Console.WriteLine("Login successfull!\n");
                         else Console.WriteLine("Login failed! Username or Password incorrect\n");
                         break;
 
                     case 2:
+                        Console.WriteLine("Input Username and Password:");
                         if (AddNewUser(database, GetUsername(), GetUsersecret())) Console.WriteLine("Successfully registered!\n");
                         else Console.WriteLine("Registration failed: User does already exists!\n");
                         break;
@@ -60,13 +62,13 @@ namespace SimpleLogin
                         break;
 
                     case 4:
-                        Console.WriteLine("Search User:");
+                        Console.WriteLine("Input Username:");
                         SearchUser(database, GetUsername());
                         Console.WriteLine("");
                         break;
 
                     case 5:
-                        Console.WriteLine("Search User:");
+                        Console.WriteLine("Input Username and Password:");
                         ResetUserPassword(database, GetUsername(), GetUsersecret());
                         Console.WriteLine("");
                         break;
@@ -83,14 +85,12 @@ namespace SimpleLogin
         //Gibt den, vom Nutzer eingegebenen, Nutzernamen zurück
         private static string GetUsername()
         {
-            Console.WriteLine("Input Username:");
             return Console.ReadLine() ?? "";
         }
 
         //Gibt das, vom Nutzer eingegebenen, Passwort zurück
         private static string GetUsersecret()
         {
-            Console.WriteLine("Input Password:");
             return SimpleEncrypter.EncryptString(_encryptKey, Console.ReadLine() ?? "");
         }
 
@@ -139,14 +139,8 @@ namespace SimpleLogin
         {
             Guid newGuid = new();
             User user = database.Users.Where(u => u.Username == username).FirstOrDefault() ?? new User() { Id = newGuid, Username = $"{newGuid}-null", Usersecret = $"{newGuid}-null" };
-
-            if (user.Username == $"{newGuid}-null")
-            {
-                Console.WriteLine("User not found");
-                return;
-            }
-
-            Console.WriteLine($"1 User found:\nUsername = ({user.Id}) {user.Username}");
+            if (user.Username == $"{newGuid}-null") return;
+            Console.WriteLine($"1 User found:\n({user.Id}) {user.Username}");
         }
 
         //Methode zum zurücksetzen des Passworts
