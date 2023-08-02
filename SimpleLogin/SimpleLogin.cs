@@ -18,6 +18,8 @@ namespace SimpleLogin
 
     //Idee:
     //Methode zum ändern des Nutzernamens
+    //Zurücksetzen des Passworts durch einen Sicherheitscode der beim anlegen des Accounts erstellt wird
+    //- Nutzer kriegt Anweisung, den Sicherheitscode sicher zu verwaren
 
     public class SimpleLogin
     {
