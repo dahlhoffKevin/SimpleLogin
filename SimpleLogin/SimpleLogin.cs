@@ -13,13 +13,8 @@ namespace SimpleLogin
     /// Speichert registrierte Nutzer in einer Datenbank
     /// </summary>
 
-    //TODO:
-    //Methode zum zurücksetzen des Passworts
-
     //Idee:
     //Methode zum ändern des Nutzernamens
-    //Zurücksetzen des Passworts durch einen Sicherheitscode der beim anlegen des Accounts erstellt wird
-    //- Nutzer kriegt Anweisung, den Sicherheitscode sicher zu verwaren
 
     //Info:
     // Add Database Migration:
