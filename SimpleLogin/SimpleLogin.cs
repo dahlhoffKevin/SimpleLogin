@@ -13,11 +13,6 @@ namespace SimpleLogin
     /// Speichert registrierte Nutzer in einer Datenbank
     /// </summary>
 
-    //Idee:
-    //Methode zum ändern des Nutzernamens
-    //Zurücksetzen des Passworts durch einen Sicherheitscode der beim anlegen des Accounts erstellt wird
-    //- Nutzer kriegt Anweisung, den Sicherheitscode sicher zu verwaren
-
     //Info:
     // Add Database Migration:
     // Add-Migration InitialCreate
@@ -37,7 +32,14 @@ namespace SimpleLogin
 
             while (true)
             {
-                Console.WriteLine("Input Exit : 0 | Login : 1 | Register : 2 | Show All User: 3 | Search User: 4 | Reset Password (Experimental): 5 | Change Username (Experimental): 6");
+                Console.WriteLine(@"Input Exit : 0 | 
+                                    Login : 1 | 
+                                    Register : 2 | 
+                                    Show All User: 3 | 
+                                    Search User: 4 | 
+                                    Reset Password (Experimental): 5 | 
+                                    Change Username (Experimental): 6");
+
                 bool result = int.TryParse(Console.ReadLine() ?? "1", out int start);
                 //Überprüft, ob der Input vom Nutzer verwendet werden kann
                 if (result == false || !new List<int>() { 0, 1, 2, 3, 4, 5, 6, 3254785 }.Contains(start))
@@ -179,7 +181,8 @@ namespace SimpleLogin
         private static void SearchUser(UserContext database, string username)
         {
             Guid newGuid = new();
-            User user = database.Users.Where(u => u.Username == username).FirstOrDefault() ?? new User() { Id = newGuid, Username = $"{newGuid}-null", Usersecret = $"{newGuid}-null" };
+            User user = database.Users.Where(u => u.Username == username).FirstOrDefault() ?? 
+                new User() { Id = newGuid, Username = $"{newGuid}-null", Usersecret = $"{newGuid}-null" };
 
             if (user.Username == $"{newGuid}-null")
             {
