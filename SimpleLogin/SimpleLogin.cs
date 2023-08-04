@@ -7,21 +7,21 @@ using System.Net.NetworkInformation;
 
 namespace SimpleLogin
 {
-    /// <summary>
-    /// Simple Login
-    /// Nutzt das Entity Framework zum aufbau einer sicheren Verbindung zu einer Sqlite Datenbank
-    /// Speichert registrierte Nutzer in einer Datenbank
-    /// </summary>
-
     //Info:
     // Add Database Migration:
     // Add-Migration InitialCreate
     // Update Database:
     // Update-Database
 
+
+    /// <summary>
+    /// Simple Login
+    /// Nutzt das Entity Framework zum aufbau einer sicheren Verbindung zu einer Sqlite Datenbank
+    /// Speichert registrierte Nutzer in einer Datenbank
+    /// </summary>
     public class SimpleLogin
     {
-        //Hashkey wird genutzt, um Zeichenfolgen zu verschlüsseln
+        // Hashkey is used to encrypt strings
         public static readonly string _encryptKey = "b14ca5898a4e4133bbce2ea2315a1916";
         public const string _username = "";
         private static bool _konami = false;
@@ -41,7 +41,8 @@ namespace SimpleLogin
                                     Change Username (Experimental): 6");
 
                 bool result = int.TryParse(Console.ReadLine() ?? "1", out int start);
-                //Überprüft, ob der Input vom Nutzer verwendet werden kann
+
+                // checks if the user input is valid
                 if (result == false || !new List<int>() { 0, 1, 2, 3, 4, 5, 6, 3254785 }.Contains(start))
                 {
                     Console.WriteLine("Invalid Input!\n");
@@ -96,27 +97,28 @@ namespace SimpleLogin
             }
         }
 
-        //Gibt den, vom Nutzer eingegebenen, Nutzernamen zurück
+        // Returns the username entered by the user
         private static string GetUsername()
         {
             Console.WriteLine("Input Username:");
             return Console.ReadLine() ?? "";
         }
 
-        //Gibt das, vom Nutzer eingegebenen, Passwort zurück
+        // Returns the password entered by the user
         private static string GetUsersecret()
         {
             Console.WriteLine("Input Password:");
             return SimpleEncrypter.EncryptString(_encryptKey, Console.ReadLine() ?? "");
         }
 
+        // Returns the recovery key entered by the user
         private static string GetUserRecoveryKey()
         {
             Console.WriteLine("Input your recovery key:");
             return SimpleEncrypter.EncryptString(_encryptKey, Console.ReadLine() ?? "");
         }
 
-        //Methode um ein, vom User eingegebenes, Passwort zu überprüfen
+        // Returns the new userscret entered by the user
         private static string GetNewUsersecret()
         {
             Console.WriteLine("Input new Password:");
@@ -131,7 +133,7 @@ namespace SimpleLogin
             return SimpleEncrypter.EncryptString(_encryptKey, newUsersecret);
         }
 
-        //Erstellt einen neuen Nutzer und lädt ihn in die Datenbank
+        // Adds a new user to the database
         private static bool AddNewUser(UserContext database, string username, string usersecret)
         {
             if (username == "") return false;
@@ -149,21 +151,21 @@ namespace SimpleLogin
             return true;
         }
 
-        //Überprüft, ob das eingegebenen Passwort korrekt ist
+        // Checks if the entered password is correct
         private static bool CheckUserCredential(UserContext database, string username, string usersecret)
         {
             if (database.Users.Any(u => u.Username == username && u.Usersecret == usersecret)) return true;
             return false;
         }
 
-        //Überprüft, ob der eingegebenen Nutzername vorhanden ist
+        // Checks if the entered username is already in use
         private static bool CheckIfUserExists(UserContext database, string username)
         {
             if (database.Users.Any(u => u.Username == username)) return true;
             return false;
         }
 
-        //Zeigt alle aktuell registrierten Nutzer in der Datenbank an
+        // Shows all registered users in the database
         private static void ShowAllUsers(UserContext database)
         {
             List<User> user = database.Users.ToList();
@@ -177,7 +179,7 @@ namespace SimpleLogin
             }
         }
 
-        //Methode zum suche von Nutzern im System
+        // Method to search for users in the database
         private static void SearchUser(UserContext database, string username)
         {
             Guid newGuid = new();
@@ -193,10 +195,10 @@ namespace SimpleLogin
             Console.WriteLine($"1 User found:\nUsername = ({user.Id}) {user.Username}");
         }
 
-        //Methode zum zurücksetzen des Passworts
+        // Reset the password of a user
         private static void ResetUserPassword(UserContext database, string username, string encryptedRecoveryKey)
         {
-            //Überprüft anhand des gegebenen Nutzernamen und des recoveryKeys, ob der Nutzer existiert
+            // Checks if the entered username and recovery key are correct
             var user = database.Users.Where(u => u.Username == username).FirstOrDefault();
 
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(encryptedRecoveryKey))
@@ -211,7 +213,7 @@ namespace SimpleLogin
                 return;
             }
 
-            //Überprüft, ob der recoveryKey korrekt ist
+            // Checks if the entered recovery key is correct
             if (user.RecoveryKey != encryptedRecoveryKey)
             {
                 Console.WriteLine("The recovery key is incorrect!");
@@ -221,13 +223,14 @@ namespace SimpleLogin
             string newUsersecret = GetNewUsersecret();
             if (newUsersecret == "") return;
 
-            // Setzt das Passwort des Nutzers zurück
+            // Change the password of the user
             user.Usersecret = newUsersecret;
             database.SaveChanges();
 
             Console.WriteLine("Password updated!");
         }
 
+        // Change the username of a user
         private static void ChangeUsername(UserContext database, string username, string usersecret)
         {
             if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(usersecret))
@@ -247,7 +250,7 @@ namespace SimpleLogin
                 return;
             }
 
-            //New Username
+            // New Username
             Console.WriteLine("Input new Username:");
             string newUsername = Console.ReadLine() ?? "";
             if (string.IsNullOrEmpty(newUsername))
@@ -256,7 +259,7 @@ namespace SimpleLogin
                 return;
             }
 
-            //Change Username
+            // Change Username
             var user = database.Users.Where(u => u.Username == username).FirstOrDefault();
 
             if (user == null)
