@@ -137,7 +137,7 @@ namespace SimpleLogin
         private static bool AddNewUser(UserContext database, string username, string usersecret)
         {
             if (username == "") return false;
-            if (usersecret == "4pZrH4vsAwcGHvo486Rrww==") return false;
+            if (usersecret == SimpleEncrypter.EncryptString(_encryptKey, string.Empty)) return false;
             if (CheckIfUserExists(database, username)) return false;
 
             string recoveryKey = RecoveryKeyGenerator.GenerateRecoveryKey();
