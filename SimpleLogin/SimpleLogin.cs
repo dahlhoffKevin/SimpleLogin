@@ -33,7 +33,7 @@ namespace SimpleLogin
             {
                 PrintMenu();
 
-                bool result = int.TryParse(Console.ReadLine() ?? "1", out int start);
+                bool _ = int.TryParse(Console.ReadLine() ?? "1", out int start);
 
                 if (!Enum.IsDefined(typeof(MenuOptions), start))
                 {
@@ -221,14 +221,18 @@ namespace SimpleLogin
         private static void ShowAllUsers(UserContext database)
         {
             List<User> user = database.Users.ToList();
-            Console.WriteLine(user.Count);
+            Console.WriteLine($"Users found: {user.Count}");
             foreach (User u in user)
             {
                 if (!_konami)
-                    Console.WriteLine($"({u.Id}) {u.Username}");
+                    Console.WriteLine($"Username: {u.Username}");
                 else
-                    Console.WriteLine($"({u.Id}) {u.Username} | {SimpleEncrypter.DecryptString(_encryptKey, u.Usersecret ?? "") ?? "<No password submitted>"} | " +
-                        $"{SimpleEncrypter.DecryptString(_encryptKey, u.RecoveryKey ?? "") ?? "<No recovery key submitted>"}");
+                    Console.WriteLine(
+                        $"Username: {u.Username} | User Infos:" +
+                        $"\n\tGUID: {u.Id}" +
+                        $"\n\tPasswort: {SimpleEncrypter.DecryptString(_encryptKey, u.Usersecret ?? "") ?? "<No password submitted>"}" +
+                        $"\n\tRecoveryKey: {SimpleEncrypter.DecryptString(_encryptKey, u.RecoveryKey ?? "") ?? "<No recovery key submitted>"}"
+                    );
             }
         }
 
